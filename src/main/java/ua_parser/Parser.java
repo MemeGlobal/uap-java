@@ -19,7 +19,6 @@ package ua_parser;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -30,13 +29,13 @@ import java.util.Map;
  * @author Steve Jiang (@sjiang) <gh at iamsteve com>
  */
 public class Parser {
-
     private static final String REGEX_YAML_PATH = "/regexes.yaml";
+
     private UserAgentParser uaParser;
     private OSParser osParser;
     private DeviceParser deviceParser;
 
-    public Parser() throws IOException {
+    public Parser() {
         this(Parser.class.getResourceAsStream(REGEX_YAML_PATH));
     }
 
@@ -47,7 +46,7 @@ public class Parser {
     public Client parse(String agentString) {
         UserAgent ua = parseUserAgent(agentString);
         OS os = parseOS(agentString);
-        Device device = deviceParser.parse(agentString);
+        Device device = parseDevice(agentString);
         return new Client(ua, os, device);
     }
 
