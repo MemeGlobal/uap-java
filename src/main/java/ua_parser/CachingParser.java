@@ -1,10 +1,13 @@
 package ua_parser;
 
-import org.apache.commons.collections.map.LRUMap;
+import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * When doing webanalytics (with for example PIG) the main pattern is to process
@@ -19,105 +22,94 @@ import java.util.Map;
  * @author Niels Basjes
  */
 public class CachingParser extends Parser {
+    private static final long DEFAULT_EXPIRE_AFTER_ACCESS = 600000;
+    private static final long DEFAULT_CACHE_SIZE = 1000;
 
-    // TODO: Make configurable
-    private static final int CACHE_SIZE = 1000;
+    private final LoadingCache<String, Client>      cacheClient;
+    private final LoadingCache<String, UserAgent>   cacheUserAgent;
+    private final LoadingCache<String, Device>      cacheDevice;
+    private final LoadingCache<String, OS>          cacheOS;
 
-    private Map<String, Client> cacheClient = null;
-    private Map<String, UserAgent> cacheUserAgent = null;
-    private Map<String, Device> cacheDevice = null;
-    private Map<String, OS> cacheOS = null;
+    private final long expireAfterAccess;
+    private final long cacheSize;
 
     // ------------------------------------------
 
-    public CachingParser() throws IOException {
-        super();
+    public CachingParser() {
+        this(DEFAULT_CACHE_SIZE, DEFAULT_EXPIRE_AFTER_ACCESS);
+    }
+
+    public CachingParser(long cacheSize, long expireAfterAccess) {
+        this(CachingParser.class.getResourceAsStream(REGEX_YAML_PATH), cacheSize, expireAfterAccess);
     }
 
     public CachingParser(InputStream regexYaml) {
+        this(regexYaml, DEFAULT_CACHE_SIZE, DEFAULT_EXPIRE_AFTER_ACCESS);
+    }
+
+    public CachingParser(InputStream regexYaml, long cacheSize, long expireAfterAccess) {
         super(regexYaml);
+
+        this.cacheSize = cacheSize;
+        this.expireAfterAccess = expireAfterAccess;
+
+        this.cacheClient = createCache(super::parse);
+        this.cacheUserAgent = createCache(super::parseUserAgent);
+        this.cacheDevice = createCache(super::parseDevice);
+        this.cacheOS = createCache(super::parseOS);
     }
 
     // ------------------------------------------
 
-    @SuppressWarnings("unchecked")
     @Override
     public Client parse(String agentString) {
-        if (agentString == null) {
+        if (Strings.isNullOrEmpty(agentString))
             return null;
-        }
-        if (cacheClient == null) {
-            cacheClient = new LRUMap(CACHE_SIZE);
-        }
-        Client client = cacheClient.get(agentString);
-        if (client != null) {
-            return client;
-        }
-        client = super.parse(agentString);
-        cacheClient.put(agentString, client);
-        return client;
+
+        return cacheClient.getUnchecked(agentString);
     }
 
     // ------------------------------------------
 
-    @SuppressWarnings("unchecked")
     @Override
     public UserAgent parseUserAgent(String agentString) {
-        if (agentString == null) {
+        if (Strings.isNullOrEmpty(agentString))
             return null;
-        }
-        if (cacheUserAgent == null) {
-            cacheUserAgent = new LRUMap(CACHE_SIZE);
-        }
-        UserAgent userAgent = cacheUserAgent.get(agentString);
-        if (userAgent != null) {
-            return userAgent;
-        }
-        userAgent = super.parseUserAgent(agentString);
-        cacheUserAgent.put(agentString, userAgent);
-        return userAgent;
+
+        return cacheUserAgent.getUnchecked(agentString);
     }
 
     // ------------------------------------------
 
-    @SuppressWarnings("unchecked")
     @Override
     public Device parseDevice(String agentString) {
-        if (agentString == null) {
+        if (Strings.isNullOrEmpty(agentString))
             return null;
-        }
-        if (cacheDevice == null) {
-            cacheDevice = new LRUMap(CACHE_SIZE);
-        }
-        Device device = cacheDevice.get(agentString);
-        if (device != null) {
-            return device;
-        }
-        device = super.parseDevice(agentString);
-        cacheDevice.put(agentString, device);
-        return device;
+
+        return cacheDevice.getUnchecked(agentString);
     }
 
     // ------------------------------------------
 
-    @SuppressWarnings("unchecked")
     @Override
     public OS parseOS(String agentString) {
-        if (agentString == null) {
+        if (Strings.isNullOrEmpty(agentString))
             return null;
-        }
 
-        if (cacheOS == null) {
-            cacheOS = new LRUMap(CACHE_SIZE);
-        }
-        OS os = cacheOS.get(agentString);
-        if (os != null) {
-            return os;
-        }
-        os = super.parseOS(agentString);
-        cacheOS.put(agentString, os);
-        return os;
+        return cacheOS.getUnchecked(agentString);
     }
 
     // ------------------------------------------
+
+    private <T> LoadingCache<String, T> createCache(Function<String, T> loader) {
+        return CacheBuilder.newBuilder()
+                .maximumSize(cacheSize)
+                .expireAfterAccess(expireAfterAccess, TimeUnit.MILLISECONDS)
+                .build(new CacheLoader<String, T>() {
+                    @Override
+                    public T load(String key) throws Exception {
+                        return loader.apply(key);
+                    }
+                });
+    }
 }

@@ -29,7 +29,7 @@ import java.util.Map;
  * @author Steve Jiang (@sjiang) <gh at iamsteve com>
  */
 public class Parser {
-    private static final String REGEX_YAML_PATH = "/regexes.yaml";
+    protected static final String REGEX_YAML_PATH = "/regexes.yaml";
 
     private UserAgentParser uaParser;
     private OSParser osParser;
@@ -62,9 +62,9 @@ public class Parser {
         return osParser.parse(agentString);
     }
 
+    @SuppressWarnings("unchecked")
     private void initialize(InputStream regexYaml) {
         Yaml yaml = new Yaml(new SafeConstructor());
-        @SuppressWarnings("unchecked")
         Map<String, List<Map<String, String>>> regexConfig = (Map<String, List<Map<String, String>>>) yaml.load(regexYaml);
 
         List<Map<String, String>> uaParserConfigs = regexConfig.get("user_agent_parsers");
