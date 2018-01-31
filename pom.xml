@@ -70,4 +70,19 @@
             </plugin>
         </plugins>
     </build>
+
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>${env.ARTIFACTORY_NAME}-snapshots</name>
+            <url>http://${env.ARTIFACTORY_HOST}/artifactory/libs-snapshot-local</url>
+        </snapshotRepository>
+
+        <repository>
+            <id>central</id>
+            <name>${env.ARTIFACTORY_NAME}-releases</name>
+            <url>http://${env.ARTIFACTORY_HOST}/artifactory/libs-release-local</url>
+        </repository>
+    </distributionManagement>
 </project>
