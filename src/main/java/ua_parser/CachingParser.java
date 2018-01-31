@@ -109,6 +109,7 @@ public class CachingParser extends Parser {
         return CacheBuilder.newBuilder()
                 .maximumSize(cacheSize)
                 .expireAfterAccess(expireAfterAccessMS, TimeUnit.MILLISECONDS)
+                .recordStats()
                 .build(new CacheLoader<String, T>() {
                     @Override
                     public T load(String key) throws Exception {
