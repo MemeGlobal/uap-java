@@ -225,7 +225,7 @@ user_agent_parsers:
       family_replacement: 'Chrome Mobile'
 
     - regex: '(chromeframe)/(\d+)\.(\d+)\.(\d+)'
-      family_replacement: 'Chrome Frame'
+      family_replacement: 'Chrome'
 
     - regex: '(SLP Browser)/(\d+)\.(\d+)'
       family_replacement: 'Tizen Browser'
