@@ -12,6 +12,8 @@
         <exchange.version>1.235</exchange.version>
         <snakeyaml.version>1.10</snakeyaml.version>
         <guava.version>19.0</guava.version>
+        <junit.version>4.12</junit.version>
+        <hamcrest.version>1.1</hamcrest.version>
     </properties>
 
     <dependencies>
@@ -28,22 +30,16 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.mgmg</groupId>
-            <artifactId>exchange-test</artifactId>
-            <version>${exchange.version}</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
-            <version>1.1</version>
+            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
