@@ -38,14 +38,17 @@ public class UserAgent {
 
     @VisibleForTesting
     static UserAgent fromMap(Map<String, String> m) {
-        if (m.containsKey("version")) {
-            if (m.get("version").isEmpty())
-                return new UserAgent(m.get("family"), null, null, null);
+        if (m.containsKey(Constants.FULL_VERSION)) {
+            String version = m.get(Constants.FULL_VERSION);
 
-            String[] versions = Arrays.copyOf(m.get("version").split("\\."), 3);
-            return new UserAgent(m.get("family"), versions[0], versions[1], versions[2]);
-        } else
-            return new UserAgent(m.get("family"), m.get("major"), m.get("minor"), m.get("patch"));
+            if (version.isEmpty())
+                return new UserAgent(m.get(Constants.FAMILY), null, null, null);
+
+            String[] versions = Arrays.copyOf(version.split("\\."), 3);
+            return new UserAgent(m.get(Constants.FAMILY), versions[0], versions[1], versions[2]);
+        } else {
+            return new UserAgent(m.get(Constants.FAMILY), m.get(Constants.MAJOR), m.get(Constants.MINOR), m.get(Constants.PATCH));
+        }
     }
 
     @Override

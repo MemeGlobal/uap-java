@@ -39,14 +39,19 @@ public class OS {
 
     @VisibleForTesting
     static OS fromMap(Map<String, String> m) {
-        if (m.containsKey("version")) {
-            if (m.get("version").isEmpty())
-                return new OS(m.get("family"), null, null, null, null);
+        if (m.containsKey(Constants.FULL_VERSION)) {
+            String version = m.get(Constants.FULL_VERSION);
 
-            String[] versions = Arrays.copyOf(m.get("version").split("\\."), 4);
-            return new OS(m.get("family"), versions[0], versions[1], versions[2], versions[3]);
-        } else
-            return new OS(m.get("family"), m.get("major"), m.get("minor"), m.get("patch"), m.get("patch_minor"));
+            if (version.isEmpty())
+                return new OS(m.get(Constants.FAMILY), null, null, null, null);
+
+            String[] versions = Arrays.copyOf(version.split("\\."), 4);
+            return new OS(m.get(Constants.FAMILY), versions[0], versions[1], versions[2], versions[3]);
+        } else {
+            return new OS(m.get(Constants.FAMILY), m.get(Constants.MAJOR), m.get(Constants.MINOR),
+                    m.get(Constants.PATCH), m.get(Constants.PATCH_MINOR)
+            );
+        }
     }
 
     @Override

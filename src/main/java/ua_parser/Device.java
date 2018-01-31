@@ -34,7 +34,7 @@ public class Device {
 
     @VisibleForTesting
     static Device fromMap(Map<String, String> m) {
-        return new Device(m.get("family"));
+        return new Device(m.get(Constants.FAMILY));
     }
 
     @Override
