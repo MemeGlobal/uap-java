@@ -33,8 +33,6 @@ public class CachingParser extends Parser {
     private final long expireAfterAccessMS;
     private final long cacheSize;
 
-    // ------------------------------------------
-
     public CachingParser() {
         this(DEFAULT_CACHE_SIZE, DEFAULT_EXPIRE_AFTER_ACCESS);
     }
@@ -59,8 +57,6 @@ public class CachingParser extends Parser {
         this.cacheOS = createCache(super::parseOS);
     }
 
-    // ------------------------------------------
-
     @Override
     public Client parse(String agentString) {
         if (Strings.isNullOrEmpty(agentString))
@@ -68,8 +64,6 @@ public class CachingParser extends Parser {
 
         return cacheClient.getUnchecked(agentString);
     }
-
-    // ------------------------------------------
 
     @Override
     public UserAgent parseUserAgent(String agentString) {
@@ -79,8 +73,6 @@ public class CachingParser extends Parser {
         return cacheUserAgent.getUnchecked(agentString);
     }
 
-    // ------------------------------------------
-
     @Override
     public Device parseDevice(String agentString) {
         if (Strings.isNullOrEmpty(agentString))
@@ -88,8 +80,6 @@ public class CachingParser extends Parser {
 
         return cacheDevice.getUnchecked(agentString);
     }
-
-    // ------------------------------------------
 
     @Override
     public OS parseOS(String agentString) {
@@ -99,7 +89,21 @@ public class CachingParser extends Parser {
         return cacheOS.getUnchecked(agentString);
     }
 
-    // ------------------------------------------
+    public LoadingCache<String, Client> getCacheClient() {
+        return cacheClient;
+    }
+
+    public LoadingCache<String, UserAgent> getCacheUserAgent() {
+        return cacheUserAgent;
+    }
+
+    public LoadingCache<String, Device> getCacheDevice() {
+        return cacheDevice;
+    }
+
+    public LoadingCache<String, OS> getCacheOS() {
+        return cacheOS;
+    }
 
     private <T> LoadingCache<String, T> createCache(Function<String, T> loader) {
         return CacheBuilder.newBuilder()
