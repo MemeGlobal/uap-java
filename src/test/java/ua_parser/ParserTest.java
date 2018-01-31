@@ -16,7 +16,6 @@
 
 package ua_parser;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.yaml.snakeyaml.Yaml;
 
@@ -34,14 +33,10 @@ import static org.junit.Assert.assertThat;
  * @author Steve Jiang (@sjiang) <gh at iamsteve com>
  */
 public class ParserTest {
-    final String TEST_RESOURCE_PATH = "/";
-    Yaml yaml = new Yaml();
-    Parser parser;
+    private static final String TEST_RESOURCE_PATH = "/";
+    private static final Yaml yaml = new Yaml();
 
-    @Before
-    public void initParser() throws Exception {
-        parser = new Parser();
-    }
+    private final Parser onTest = new Parser();
 
     @Test
     public void testParseUserAgent() {
@@ -52,12 +47,6 @@ public class ParserTest {
     public void testParseOS() {
         testOSFromYaml("test_os.yaml");
     }
-
-    @Test
-    public void testParseAdditionalOS() {
-        testOSFromYaml("additional_os_tests.yaml");
-    }
-
 
     @Test
     public void testParseDevice() {
@@ -86,8 +75,8 @@ public class ParserTest {
                 new OS("iOS", "5", "1", "1", null),
                 new Device("iPhone"));
 
-        assertThat(parser.parse(agentString1), is(expected1));
-        assertThat(parser.parse(agentString2), is(expected2));
+        assertThat(onTest.parse(agentString1), is(expected1));
+        assertThat(onTest.parse(agentString2), is(expected2));
     }
 
     @Test
@@ -123,7 +112,7 @@ public class ParserTest {
             if (testCase.containsKey("js_ua")) continue;
 
             String uaString = testCase.get("user_agent_string");
-            assertThat(uaString, parser.parseUserAgent(uaString), is(UserAgent.fromMap(testCase)));
+            assertThat(uaString, onTest.parseUserAgent(uaString), is(UserAgent.fromMap(testCase)));
         }
     }
 
@@ -136,7 +125,7 @@ public class ParserTest {
             if (testCase.containsKey("js_ua")) continue;
 
             String uaString = testCase.get("user_agent_string");
-            assertThat(uaString, parser.parseOS(uaString), is(OS.fromMap(testCase)));
+            assertThat(uaString, onTest.parseOS(uaString), is(OS.fromMap(testCase)));
         }
     }
 
@@ -147,7 +136,7 @@ public class ParserTest {
         for (Map<String, String> testCase : testCases) {
 
             String uaString = testCase.get("user_agent_string");
-            assertThat(uaString, parser.parseDevice(uaString), is(Device.fromMap(testCase)));
+            assertThat(uaString, onTest.parseDevice(uaString), is(Device.fromMap(testCase)));
         }
     }
 
