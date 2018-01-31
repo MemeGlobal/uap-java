@@ -30,7 +30,7 @@ public class CachingParser extends Parser {
     private final LoadingCache<String, Device>      cacheDevice;
     private final LoadingCache<String, OS>          cacheOS;
 
-    private final long expireAfterAccess;
+    private final long expireAfterAccessMS;
     private final long cacheSize;
 
     // ------------------------------------------
@@ -47,11 +47,11 @@ public class CachingParser extends Parser {
         this(regexYaml, DEFAULT_CACHE_SIZE, DEFAULT_EXPIRE_AFTER_ACCESS);
     }
 
-    public CachingParser(InputStream regexYaml, long cacheSize, long expireAfterAccess) {
+    public CachingParser(InputStream regexYaml, long cacheSize, long expireAfterAccessMS) {
         super(regexYaml);
 
         this.cacheSize = cacheSize;
-        this.expireAfterAccess = expireAfterAccess;
+        this.expireAfterAccessMS = expireAfterAccessMS;
 
         this.cacheClient = createCache(super::parse);
         this.cacheUserAgent = createCache(super::parseUserAgent);
@@ -104,7 +104,7 @@ public class CachingParser extends Parser {
     private <T> LoadingCache<String, T> createCache(Function<String, T> loader) {
         return CacheBuilder.newBuilder()
                 .maximumSize(cacheSize)
-                .expireAfterAccess(expireAfterAccess, TimeUnit.MILLISECONDS)
+                .expireAfterAccess(expireAfterAccessMS, TimeUnit.MILLISECONDS)
                 .build(new CacheLoader<String, T>() {
                     @Override
                     public T load(String key) throws Exception {
