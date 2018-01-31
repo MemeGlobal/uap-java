@@ -16,6 +16,9 @@
 
 package ua_parser;
 
+import com.google.common.annotations.VisibleForTesting;
+
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -34,31 +37,40 @@ public class OS {
         this.patchMinor = patchMinor;
     }
 
-    public static OS fromMap(Map<String, String> m) {
-        return new OS(m.get("family"), m.get("major"), m.get("minor"), m.get("patch"), m.get("patch_minor"));
+    @VisibleForTesting
+    static OS fromMap(Map<String, String> m) {
+        if (m.containsKey("version")) {
+            if (m.get("version").isEmpty())
+                return new OS(m.get("family"), null, null, null, null);
+
+            String[] versions = Arrays.copyOf(m.get("version").split("\\."), 4);
+            return new OS(m.get("family"), versions[0], versions[1], versions[2], versions[3]);
+        } else
+            return new OS(m.get("family"), m.get("major"), m.get("minor"), m.get("patch"), m.get("patch_minor"));
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (other == this) return true;
-        if (!(other instanceof OS)) return false;
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
 
-        OS o = (OS) other;
-        return ((this.family != null && this.family.equals(o.family)) || this.family == o.family) &&
-                ((this.major != null && this.major.equals(o.major)) || this.major == o.major) &&
-                ((this.minor != null && this.minor.equals(o.minor)) || this.minor == o.minor) &&
-                ((this.patch != null && this.patch.equals(o.patch)) || this.patch == o.patch) &&
-                ((this.patchMinor != null && this.patchMinor.equals(o.patchMinor)) || this.patchMinor == o.patchMinor);
+        OS os = (OS) object;
+
+        if (family != null ? !family.equalsIgnoreCase(os.family) : os.family != null) return false;
+        if (major != null ? !major.equals(os.major) : os.major != null) return false;
+        if (minor != null ? !minor.equals(os.minor) : os.minor != null) return false;
+        if (patch != null ? !patch.equals(os.patch) : os.patch != null) return false;
+        return patchMinor != null ? patchMinor.equals(os.patchMinor) : os.patchMinor == null;
     }
 
     @Override
     public int hashCode() {
-        int h = family == null ? 0 : family.hashCode();
-        h += major == null ? 0 : major.hashCode();
-        h += minor == null ? 0 : minor.hashCode();
-        h += patch == null ? 0 : patch.hashCode();
-        h += patchMinor == null ? 0 : patchMinor.hashCode();
-        return h;
+        int result = family != null ? family.hashCode() : 0;
+        result = 31 * result + (major != null ? major.hashCode() : 0);
+        result = 31 * result + (minor != null ? minor.hashCode() : 0);
+        result = 31 * result + (patch != null ? patch.hashCode() : 0);
+        result = 31 * result + (patchMinor != null ? patchMinor.hashCode() : 0);
+        return result;
     }
 
     @Override
