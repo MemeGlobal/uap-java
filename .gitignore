@@ -1,3 +1,11 @@
 target
 .classpath
 .project
+*.class
+/**/target
+/**/logs
+.idea/
+*.iml
+/test-output
+*.log
+*.versionsBackup
