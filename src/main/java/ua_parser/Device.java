@@ -16,6 +16,8 @@
 
 package ua_parser;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import java.util.Map;
 
 /**
@@ -30,8 +32,9 @@ public class Device {
         this.family = family;
     }
 
-    public static Device fromMap(Map<String, String> m) {
-        return new Device((String) m.get("family"));
+    @VisibleForTesting
+    static Device fromMap(Map<String, String> m) {
+        return new Device(m.get("family"));
     }
 
     @Override
