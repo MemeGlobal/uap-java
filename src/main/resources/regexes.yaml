@@ -2102,7 +2102,7 @@ device_parsers:
       brand_replacement: 'Lenovo'
       model_replacement: '$1'
 
-    - regex: '; *(MFC\d+)[A-Z]{2}([^;,/]*? Build'
+    - regex: '; *(MFC\d+)[A-Z]{2}([^;,/]*),? Build'
       device_replacement: '$1$2'
       brand_replacement: 'Lexibook'
       model_replacement: '$1$2'
@@ -2567,7 +2567,7 @@ device_parsers:
       brand_replacement: 'Quanta'
       model_replacement: '$1'
 
-    - regex: '; *(RK\d+? Build/'
+    - regex: '; *(RK\\d+),? Build/'
       device_replacement: '$1'
       brand_replacement: 'Rockchip'
       model_replacement: '$1'
