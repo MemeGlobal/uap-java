@@ -35,17 +35,18 @@ public class Device {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (other == this) return true;
-        if (!(other instanceof Device)) return false;
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
 
-        Device o = (Device) other;
-        return (this.family != null && this.family.equals(o.family)) || this.family == o.family;
+        Device device = (Device) object;
+
+        return family != null ? family.equalsIgnoreCase(device.family) : device.family == null;
     }
 
     @Override
     public int hashCode() {
-        return family == null ? 0 : family.hashCode();
+        return family != null ? family.hashCode() : 0;
     }
 
     @Override
