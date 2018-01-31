@@ -42,13 +42,6 @@ public class CachingParserTest extends ParserTest {
     }
 
     @Test
-    public void testCachedParseAdditionalOS() {
-        super.testParseAdditionalOS();
-        super.testParseAdditionalOS();
-        super.testParseAdditionalOS();
-    }
-
-    @Test
     public void testCachedParseDevice() {
         super.testParseDevice();
         super.testParseDevice();

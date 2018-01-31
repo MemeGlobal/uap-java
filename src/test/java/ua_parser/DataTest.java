@@ -16,15 +16,14 @@
 
 package ua_parser;
 
+import org.junit.Test;
+
 import java.util.HashSet;
 import java.util.Random;
 
-import org.junit.Test;
-import org.junit.Before;
-import org.yaml.snakeyaml.Yaml;
-
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
 
 /**
  * Abstract base class for the data class tests
@@ -32,13 +31,8 @@ import static org.junit.Assert.*;
  * @author Steve Jiang (@sjiang) <gh at iamsteve com>
  */
 public abstract class DataTest<T> {
-    protected Random random;
+    protected Random random = new Random();
     protected Random seedRandom = new Random();
-
-    @Before
-    public void initialize() {
-        random = new Random();
-    }
 
     protected abstract T getRandomInstance(long seed, StringGenerator g);
 

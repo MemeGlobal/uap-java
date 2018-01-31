@@ -54,12 +54,6 @@ public class ParserTest {
     }
 
     @Test
-    public void testParseAdditionalOS() {
-        testOSFromYaml("additional_os_tests.yaml");
-    }
-
-
-    @Test
     public void testParseDevice() {
         testDeviceFromYaml("test_device.yaml");
     }
